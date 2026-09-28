@@ -1,0 +1,9 @@
+# 追蹤清單：新增公司只需在這裡加一筆
+# kind: big_pharma | clinical_biotech | medtech | tools_services
+companies:
+  - ticker: TWST
+    kind: tools_services
+  - ticker: LLY
+    kind: big_pharma
+  - ticker: VKTX
+    kind: clinical_biotech

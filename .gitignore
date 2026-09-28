@@ -1,0 +1,14 @@
+# 原始抓取結果（見 CLAUDE.md 第 3 節）
+data/raw/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# macOS
+.DS_Store
+
+# 本機設定
+.claude/settings.local.json

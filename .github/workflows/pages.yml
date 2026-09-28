@@ -1,0 +1,42 @@
+# 部署前端到 GitHub Pages。只發布 web/ 與 data/snapshot.json，不發布 backend、CLAUDE.md 等。
+# 發布後的結構與 repo 相同，所以 web/index.html 內的 ../data/snapshot.json 在本機與線上都成立。
+name: Deploy Pages
+
+on:
+  push:
+    branches: [main]
+    paths: ['web/**', 'data/snapshot.json', '.github/workflows/pages.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}/web/
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble site
+        run: |
+          mkdir -p _site/web _site/data
+          cp -R web/. _site/web/
+          cp data/snapshot.json _site/data/
+          python3 -c "import json; json.load(open('_site/data/snapshot.json'))"
+          # 根目錄導向 web/
+          printf '<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=web/"><title>Readout</title><a href="web/">Readout</a>\n' > _site/index.html
+          touch _site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
